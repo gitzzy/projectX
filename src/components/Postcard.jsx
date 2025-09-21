@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
+const BACKEND_URL = "https://your-backend.vercel.app"; // replace with your deployed backend
+
 export default function Postcard() {
   const [posts, setPosts] = useState([]);
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("http://localhost:4000/posts");
+      const res = await fetch(`${BACKEND_URL}/posts`);
       let data = await res.json();
 
       data = data
@@ -20,10 +22,10 @@ export default function Postcard() {
 
   const deletePost = async (id) => {
     try {
-      await fetch(`http://localhost:4000/delete/post/${id}`, {
+      await fetch(`${BACKEND_URL}/delete/post/${id}`, {
         method: "DELETE",
       });
-      setPosts(posts.filter((p) => p._id !== id)); // ✅ update state
+      setPosts(posts.filter((p) => p._id !== id));
     } catch (err) {
       console.error(err);
     }
@@ -31,7 +33,7 @@ export default function Postcard() {
 
   useEffect(() => {
     fetchPosts(); // ✅ only once on mount
-  }, [posts]);
+  }, []);
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -43,7 +45,7 @@ export default function Postcard() {
             key={post._id}
             id={post._id}
             content={post.content}
-            deletePost={deletePost} // ✅ pass function
+            deletePost={deletePost}
           />
         ))
       )}
@@ -77,12 +79,14 @@ function SinglePost({ id, content, deletePost }) {
               <div className="font-bold">Devansh Tyagi</div>
               <div className="text-gray-500 text-sm p-[2px] px-1">@tyagi</div>
             </div>
-            <div
-              className="cursor-pointer text-red-500"
-              onClick={() => deletePost(id)} // ✅ works now
-            >
-              🗑️
-            </div>
+            {deletePost && (
+              <div
+                className="cursor-pointer text-red-500"
+                onClick={() => deletePost(id)}
+              >
+                🗑️
+              </div>
+            )}
           </div>
           <div className="pt-2">{content}</div>
         </div>

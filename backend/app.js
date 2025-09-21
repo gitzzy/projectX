@@ -1,22 +1,22 @@
-const express = require('express');
-const cors = require('cors'); // import cors
-const { MongoClient } = require('mongodb');
-const { ObjectId } = require('mongodb');
+import express from "express";
+import cors from "cors";
+import { MongoClient, ObjectId } from "mongodb";
 
 const app = express();
-const port = 4000;
+const PORT = process.env.PORT || 4000;
 
-// Enable CORS for your frontend
-app.use(cors({ origin: 'http://localhost:5173' })); 
-app.use(express.json()); // to parse JSON bodies
 
-const uri = "mongodb://127.0.0.1:27017";
+const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
+
+
+app.use(cors({ origin: "https://xclone-inky.vercel.app" })); 
+app.use(express.json()); // parse JSON bodies
 
 async function main() {
   try {
     await client.connect();
-    console.log("Connected to MongoDB");
+    console.log("Connected to MongoDB Atlas");
 
     const projectDB = client.db("projectx");
     const chatCollection = projectDB.collection("chat");
@@ -25,24 +25,24 @@ async function main() {
     const statCollection = cricketDB.collection("stat");
 
     // Root
-    app.get('/', (req, res) => {
-      res.send('Hello from backend!');
+    app.get("/", (req, res) => {
+      res.send("Hello from backend!");
     });
 
     // Get all cricket stats
-    app.get('/c', async (req, res) => {
+    app.get("/c", async (req, res) => {
       const stats = await statCollection.find().toArray();
       res.json(stats);
     });
 
     // Get all chat messages
-    app.get('/posts', async (req, res) => {
+    app.get("/posts", async (req, res) => {
       const posts = await chatCollection.find().toArray();
       res.json(posts);
     });
 
     // Add a new chat message
-    app.post('/add/post', async (req, res) => {
+    app.post("/add/post", async (req, res) => {
       const { content } = req.body;
       if (!content) return res.status(400).json({ error: "Content required" });
 
@@ -50,28 +50,28 @@ async function main() {
       res.json({ message: "Post added", id: result.insertedId });
     });
 
-    app.listen(port, () => {
-      console.log(`Server running on http://localhost:${port}`);
+    // Delete a chat message
+    app.delete("/delete/post/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const result = await chatCollection.deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+          res.json({ message: "Post deleted" });
+        } else {
+          res.status(404).json({ error: "Post not found" });
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to delete post" });
+      }
     });
 
-    app.delete('/delete/post/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await chatCollection.deleteOne({ _id: new ObjectId(id) });
-
-    if (result.deletedCount === 1) {
-      res.json({ message: "Post deleted" });
-    } else {
-      res.status(404).json({ error: "Post not found" });
-    }
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to delete post" });
-  }
-});
-
-  } catch (err) {
-    console.error(err);
+    console.error("MongoDB connection error:", err);
   }
 }
 
