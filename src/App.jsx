@@ -5,6 +5,7 @@ import './App.css'
 import Menubar from './components/Menubar'
 import Navbar from './components/Navbar'
 import Base from './components/Base'
+import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,6 +15,7 @@ function App() {
     {/* <Menubar/> */}
      {/* <Navbar/> */}
      <Base/>
+     <Analytics />
     </>
   )
 }
