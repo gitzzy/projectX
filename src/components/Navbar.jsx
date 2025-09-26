@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import logo from '../assets/TE logo.jpeg'
+import { Link } from 'react-router-dom'
 
 export default function Navbar() {
   return (
@@ -23,7 +24,8 @@ export default function Navbar() {
         </div>
         <div className="border p-3 text-center w-[50%] bg-black text-white rounded-4xl text-xl font-bold cursor-pointer
         sm:w-[80%]">
-          Post
+          <div></div>
+          <Link to='/post'><div>Post</div></Link>
         </div>
         <div className="flex gap-2 lg:gap-6 items-center cursor-pointer">
           <img

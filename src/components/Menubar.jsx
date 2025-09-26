@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Menubar() {
   const [tog, setTog] = useState(false)
@@ -51,7 +52,7 @@ export default function Menubar() {
         </div>
 
         <div className="border p-3 text-center bg-black text-white rounded-4xl text-xl font-bold cursor-pointer">
-          Post
+          <Link to="/post">Post</Link>
         </div>
 
         <div className="flex gap-2 lg:gap-6 items-center cursor-pointer">

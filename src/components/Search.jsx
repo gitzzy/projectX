@@ -1,47 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Search() {
   const [post, setPost] = useState('');
-  const [postsList, setPostsList] = useState([]); // store posts
+  const [postsList, setPostsList] = useState([]); // store posts locally
 
-  const BACKEND_URL = 'https://your-backend.vercel.app'; // replace with your actual deployed backend
-
-  // Function to add a post
-  const onPost = async () => {
-    if (!post.trim()) return;
-
-    try {
-      const res = await fetch(`${BACKEND_URL}/add/post`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: post }),
-      });
-
-      const data = await res.json();
-      console.log(data);
-      setPost('');
-
-      // Update local posts list after adding a new post
-      fetchPosts();
-    } catch (err) {
-      console.error(err);
-    }
+  const onPost = () => {
+    if (!post.trim()) return; // ignore empty posts
+    const newPost = {
+      _id: Date.now(), // unique id for rendering
+      content: post,
+    };
+    setPostsList([newPost, ...postsList]); // add new post at top
+    setPost(''); // clear input
   };
-
-  // Function to fetch posts
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/posts`);
-      const data = await res.json();
-      setPostsList(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    fetchPosts(); // fetch posts on mount
-  }, []);
 
   return (
     <div className="top-0 bg-white z-50">

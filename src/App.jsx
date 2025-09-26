@@ -5,7 +5,8 @@ import './App.css'
 import Menubar from './components/Menubar'
 import Navbar from './components/Navbar'
 import Base from './components/Base'
-import { Analytics } from "@vercel/analytics/next"
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import FullPost from './components/FullPost'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,8 +15,13 @@ function App() {
     <>
     {/* <Menubar/> */}
      {/* <Navbar/> */}
-     <Base/>
-     <Analytics />
+     <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Base/>}/>
+        <Route path='/post' element={<FullPost/>}/>
+      </Routes>
+     </BrowserRouter>
+    
     </>
   )
 }

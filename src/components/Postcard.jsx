@@ -1,39 +1,21 @@
-import React, { useEffect, useState } from "react";
-
-const BACKEND_URL = "https://your-backend.vercel.app"; // replace with your deployed backend
+import React, { useState } from "react";
 
 export default function Postcard() {
   const [posts, setPosts] = useState([]);
 
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/posts`);
-      let data = await res.json();
-
-      data = data
-        .filter((p) => p.content && p.content.trim() !== "")
-        .sort((a, b) => b._id.localeCompare(a._id));
-
-      setPosts(data);
-    } catch (err) {
-      console.error(err);
-    }
+  // Add a new post locally
+  const addPost = (content) => {
+    if (!content.trim()) return;
+    const newPost = {
+      _id: Date.now().toString(),
+      content,
+    };
+    setPosts([newPost, ...posts]);
   };
 
-  const deletePost = async (id) => {
-    try {
-      await fetch(`${BACKEND_URL}/delete/post/${id}`, {
-        method: "DELETE",
-      });
-      setPosts(posts.filter((p) => p._id !== id));
-    } catch (err) {
-      console.error(err);
-    }
+  const deletePost = (id) => {
+    setPosts(posts.filter((p) => p._id !== id));
   };
-
-  useEffect(() => {
-    fetchPosts(); // ✅ only once on mount
-  }, []);
 
   return (
     <div className="p-4 flex flex-col gap-4">
